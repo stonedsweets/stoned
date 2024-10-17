@@ -25,7 +25,6 @@ router.get('/logout', authController.logoutUser);
 router.get('/signup', authController.renderSignupPage);
 router.post('/signup', authController.signupUser);
 
-
 // Render shop page
 router.get('/shop', shopController.renderShopPage);
 
