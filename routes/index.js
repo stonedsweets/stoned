@@ -21,6 +21,11 @@ router.get('/login', authController.renderLoginPage);
 router.post('/login', authController.loginUser);
 router.get('/logout', authController.logoutUser);
 
+//signup new user
+router.get('/signup', authController.renderSignupPage);
+router.post('/signup', authController.signupUser);
+
+
 // Render shop page
 router.get('/shop', shopController.renderShopPage);
 
