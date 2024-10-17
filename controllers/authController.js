@@ -6,17 +6,29 @@ exports.renderLoginPage = (req, res) => {
 };
 
 exports.loginUser = (req, res, next) => {
+  console.log('Login attempt:', req.body); // Log the login attempt with username and password
   passport.authenticate('local', (err, user, info) => {
-    if (err) return next(err);
-    if (!user) return res.redirect('/login');
+    if (err) {
+      console.error('Error during authentication:', err); // Log authentication error
+      return next(err);
+    }
+    if (!user) {
+      console.log('Authentication failed:', info ? info.message : 'Unknown reason'); // Log failure reason
+      req.flash('error_msg', info ? info.message : 'Invalid credentials'); // Add flash message for failure
+      return res.redirect('/login'); // Redirect to login page on failure
+    }
     req.logIn(user, (err) => {
-      if (err) return next(err);
-      console.log('User logged in:', user); // Log user details
-      console.log('Session:', req.session); // Log session details
-      return res.redirect('/admin');
+      if (err) {
+        console.error('Error during login:', err); // Log login error
+        return next(err);
+      }
+      console.log('User successfully logged in:', user); // Log successful login
+      console.log('Session data:', req.session); // Log session details
+      return res.redirect('/admin'); // Redirect to admin page on success
     });
   })(req, res, next);
 };
+ 
 
 exports.logoutUser = (req, res, next) => {
   req.logout(err => {
