@@ -60,7 +60,7 @@ exports.signupUser = async (req, res, next) => {
       return res.redirect('/admin');
     });
   } catch (err) {
-    console.error(err);
+    console.error('Error during signup:', err); // Log the error
     req.flash('error_msg', 'An error occurred during signup');
     return res.redirect('/signup');
   }
