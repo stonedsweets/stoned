@@ -7,14 +7,13 @@ const authController = require('../controllers/authController');
 const shopController = require('../controllers/shopController');
 const contactController = require('../controllers/contactController');
 const orderController = require('../controllers/orderController');
-const isAuthenticated = require('../middleware/isAuthenticated');
 const { errorHandler } = require('../middleware/common');
 
 // Render home page
 router.get('/', homeController.renderHomePage);
 
 // Admin page
-router.get('/admin', isAuthenticated, adminController.renderAdminPage);
+router.get('/admin', adminController.renderAdminPage);
 
 // Login routes
 router.get('/login', authController.renderLoginPage);
