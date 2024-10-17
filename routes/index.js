@@ -14,7 +14,7 @@ const { errorHandler } = require('../middleware/common');
 router.get('/', homeController.renderHomePage);
 
 // Admin page
-router.get('/baker', isAuthenticated, adminController.renderAdminPage);
+router.get('/admin', isAuthenticated, adminController.renderAdminPage);
 
 // Login routes
 router.get('/login', authController.renderLoginPage);
