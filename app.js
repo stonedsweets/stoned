@@ -3,6 +3,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const flash = require('connect-flash');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const passport = require('./middleware/passportConfig'); // Ensure passportConfig is correct
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -34,8 +37,23 @@ mongoose.connect(mongoURI, {
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
 
+// Set up session with connect-mongo
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_secret_key',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: mongoURI }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
+  }
+}));
+
 // Initialize connect-flash
 app.use(flash());
+
+// Initialize Passport and restore authentication state, if any, from the session
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Set flash messages to response locals
 app.use((req, res, next) => {
@@ -49,7 +67,7 @@ app.use((req, res, next) => {
 const appRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');
 app.use('/', appRouter);
-app.use(adminRouter);
+app.use(require('./middleware/isAuthenticated'), adminRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

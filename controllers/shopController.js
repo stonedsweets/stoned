@@ -1,4 +1,4 @@
-// controllers/ShopController.js
+// controllers/canteenController.js
 const Item = require('../models/Item');
 
 exports.renderShopPage = async (req, res, next) => {
