@@ -67,7 +67,7 @@ app.use((req, res, next) => {
 const appRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');
 app.use('/', appRouter);
-app.use(require('./middleware/isAuthenticated'), adminRouter);
+app.use('/admin', adminRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
