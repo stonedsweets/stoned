@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en, kiswahili">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Welcome to MiniEats Ke, your home away from home. Experience luxury, comfort, and exquisite cuisine in the heart of Kenya.">
+        <meta name="keywords" content="hotel, MiniEats Ke, luxury hotel, Kenya, accommodation, restaurant, travel">
+        <meta name="author" content="MiniEats Ke">
+        <meta property="og:title" content="MiniEats Ke - Your Luxury Hotel in Kenya">
+        <meta property="og:description" content="Experience luxury, comfort, and exquisite cuisine in the heart of Kenya at MiniEats Ke.">
+        <meta property="og:image" content="https://www.yourwebsite.com/images/og-image.jpg">
+        <meta property="og:url" content="https://www.yourwebsite.com">
+        <meta property="og:type" content="website">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="MiniEats Ke - Your Luxury Hotel in Kenya">
+        <meta name="twitter:description" content="Experience luxury, comfort, and exquisite cuisine in the heart of Kenya at MiniEats Ke.">
+        <meta name="twitter:image" content="https://www.yourwebsite.com/images/twitter-image.jpg">
+        <link rel="icon" href="/images/pp.jpg" type="image/x-icon">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300..900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/styles.css">
+        <title>MiniEats Ke</title>
+    <style>
+        form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin: 10px 0 5px;
+    color: #333;
+}
+
+form input, form select {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+form button {
+    padding: 10px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #218838;
+}
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <img src="/images/logo.png" alt="MiniEats Logo">
+        <h1>MiniEats</h1>
+    </header>
+    <main>
+    <h1>Add New Product</h1>
+    <form action="/addProducts" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="priceInKES">Price in KES:</label>
+        <input type="number" id="priceInKES" name="priceInKES" step="0.01" required><br><br>
+
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="beverages">Beverages</option>
+            <option value="desserts">Desserts</option>
+            <option value="fast foods">Fast foods</option>
+        </select>
+
+        <label for="imageUrl">Image URL:</label>
+        <input type="url" id="imageUrl" name="imageUrl" required><br><br>
+
+        <button type="submit">Add Product</button>
+    </form>
+    <a href="/admin">Back to Admin Page
+    </a></main>
+</body>
+
+</html>
