@@ -19,7 +19,7 @@ exports.getAddProduct = (req, res) => {
 exports.postAddProduct = async (req, res, next) => {
   const { name, category, imageUrl, priceInKES } = req.body;
   try {
-    const newItem = new Item({ name, price: priceInKES, currency: 'KES', category, imageUrl, user: req.session.user });
+    const newItem = new Item({ name, price: priceInKES, currency: 'KES', category, imageUrl});
     await newItem.save();
     res.redirect('/vulcanassasin');
   } catch (error) {
@@ -39,7 +39,7 @@ exports.getOrderSummary = async (req, res, next) => {
       },
       { $sort: { _id: 1 } }
     ]);
-    res.render('order-summary', { summary, user: req.session.user });
+    res.render('order-summary', { summary});
   } catch (err) {
     next(err);
   }
