@@ -4,10 +4,10 @@ const Order = require('../models/Order');
 exports.renderAdminPage = async (req, res) => {
   try {
     const items = await Item.find();
-    console.log('Items fetched for admin page:', items); // Debugging output
-    res.render('admin', { items });
+    console.log('Items fetched for baker page:', items); // Debugging output
+    res.render('baker', { items });
   } catch (err) {
-    console.error('Error fetching items for admin page:', err);
+    console.error('Error fetching items for baker page:', err);
     res.status(500).send('Internal Server Error');
   }
 };
@@ -21,7 +21,7 @@ exports.postAddProduct = async (req, res, next) => {
   try {
     const newItem = new Item({ name, price: priceInKES, currency: 'KES', category, imageUrl, user: req.session.user });
     await newItem.save();
-    res.redirect('/admin');
+    res.redirect('/baker');
   } catch (error) {
     next(error);
   }
@@ -74,7 +74,7 @@ exports.postEditProduct = async (req, res, next) => {
     if (!updatedProduct) {
       return res.status(404).send('Product not found');
     }
-    res.redirect('/admin');
+    res.redirect('/baker');
   } catch (error) {
     next(error);
   }
@@ -86,7 +86,7 @@ exports.deleteProduct = async (req, res, next) => {
     if (!item) {
       return res.status(404).send('Product not found');
     }
-    res.redirect('/admin');
+    res.redirect('/baker');
   } catch (error) {
     next(error);
   }

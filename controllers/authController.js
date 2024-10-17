@@ -24,7 +24,7 @@ exports.loginUser = (req, res, next) => {
       }
       console.log('User successfully logged in:', user); // Log successful login
       console.log('Session data:', req.session); // Log session details
-      return res.redirect('/admin'); // Redirect to admin page on success
+      return res.redirect('/baker'); // Redirect to admin page on success
     });
   })(req, res, next);
 };
