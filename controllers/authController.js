@@ -14,17 +14,29 @@ exports.renderSignupPage = (req, res) => {
 
 // User login logic using passport
 exports.loginUser = (req, res, next) => {
+  console.log('Login attempt with:', req.body); // Log incoming login attempt
+
   passport.authenticate('local', (err, user, info) => {
-    if (err) return next(err);
-    if (!user) return res.redirect('/admin ');
+    if (err) {
+      console.error('Authentication error:', err);
+      return next(err);
+    }
+    if (!user) {
+      console.error('Authentication failed:', info.message);
+      return res.redirect('/login');
+    }
     req.logIn(user, (err) => {
-      if (err) return next(err);
+      if (err) {
+        console.error('Login error:', err);
+        return next(err);
+      }
       console.log('User logged in:', user); // Log user details
       console.log('Session:', req.session); // Log session details
       return res.redirect('/admin');
     });
   })(req, res, next);
 };
+
 
 // User signup logic
 exports.signupUser = async (req, res, next) => {
