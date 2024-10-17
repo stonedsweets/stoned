@@ -4,7 +4,7 @@ const router = express.Router();
 const homeController = require('../controllers/homeController');
 const adminController = require('../controllers/adminController');
 const authController = require('../controllers/authController');
-const canteenController = require('../controllers/canteenController');
+const shopController = require('../controllers/shopController');
 const contactController = require('../controllers/contactController');
 const orderController = require('../controllers/orderController');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -21,7 +21,7 @@ router.get('/login', authController.renderLoginPage);
 router.post('/login', authController.loginUser);
 router.get('/logout', authController.logoutUser);
 
-// Render canteen page
+// Render shop page
 router.get('/shop', shopController.renderShopPage);
 
 // Render contact page
