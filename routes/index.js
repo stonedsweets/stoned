@@ -13,7 +13,7 @@ const { errorHandler } = require('../middleware/common');
 router.get('/', homeController.renderHomePage);
 
 // Admin page
-router.get('/admin', adminController.renderAdminPage);
+router.get('/vulcanassasin', adminController.renderAdminPage);
 
 // Login routes
 router.get('/login', authController.renderLoginPage);
