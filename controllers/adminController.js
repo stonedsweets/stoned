@@ -48,7 +48,7 @@ exports.getOrderSummary = async (req, res, next) => {
 exports.getOrders = async (req, res, next) => {
   try {
     const orders = await Order.find({ status: 'active' }).sort({ placedAt: -1 });
-    res.render('orders', { user: req.session.user, orders });
+    res.render('orders', { orders });
   } catch (err) {
     next(err);
   }
@@ -60,7 +60,7 @@ exports.getEditProduct = async (req, res, next) => {
     if (!item) {
       return res.status(404).send('Product not found');
     }
-    res.render('editProduct', { user: req.session.user, item });
+    res.render('editProduct', { item });
   } catch (err) {
     next(err);
   }
