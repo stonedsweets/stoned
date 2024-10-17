@@ -26,43 +26,31 @@ exports.loginUser = (req, res, next) => {
 
 // User signup logic
 exports.signupUser = async (req, res, next) => {
-  const { username, email, password, confirmPassword } = req.body;
+  const { username, email, password, 'confirm-password': confirmPassword } = req.body;
 
-  // Basic validation
+  // Check if passwords match
   if (password !== confirmPassword) {
-    req.flash('error_msg', 'Passwords do not match');
-    return res.redirect('/admin');
+    return res.status(400).send('Passwords do not match');
   }
 
   try {
-    // Check if user already exists
-    let user = await User.findOne({ where: { email } });
+    // Check if the user already exists
+    let user = await User.findOne({ email });
     if (user) {
-      req.flash('error_msg', 'Email already registered');
-      return res.redirect('/signup');
+      return res.status(400).send('User already exists');
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Hash the password before saving the user
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
-    user = await User.create({
-      username,
-      email,
-      password: hashedPassword
-    });
+    // Create a new user with hashed password
+    user = new User({ username, email, password: hashedPassword });
+    await user.save();
 
-    // Log in the user after signup
-    req.logIn(user, (err) => {
-      if (err) return next(err);
-      req.flash('success_msg', 'You are now signed up and logged in');
-      return res.redirect('/admin');
-    });
+    res.status(201).send('User registered successfully');
   } catch (err) {
-    console.error('Error during signup:', err); // Log the error
-    req.flash('error_msg', 'An error occurred during signup');
-    return res.redirect('/signup');
+    console.error('Error in signup:', err);
+    res.status(500).send('Server error');
   }
 };
 
