@@ -13,15 +13,15 @@ exports.renderAdminPage = async (req, res) => {
 };
 
 exports.getAddProduct = (req, res) => {
-  res.render('add');
+  res.render('addProducts');
 };
 
 exports.postAddProduct = async (req, res, next) => {
   const { name, category, imageUrl, priceInKES } = req.body;
   try {
-    const newItem = new Item({ name, price: priceInKES, currency: 'KES', category, imageUrl});
+    const newItem = new Item({ name, price: priceInKES, currency: 'KES', category, imageUrl, user: req.session.user });
     await newItem.save();
-    res.redirect('/vulcanassasin');
+    res.redirect('/admin');
   } catch (error) {
     next(error);
   }
@@ -39,7 +39,7 @@ exports.getOrderSummary = async (req, res, next) => {
       },
       { $sort: { _id: 1 } }
     ]);
-    res.render('order-summary', { summary});
+    res.render('order-summary', { summary, user: req.session.user });
   } catch (err) {
     next(err);
   }
@@ -48,7 +48,7 @@ exports.getOrderSummary = async (req, res, next) => {
 exports.getOrders = async (req, res, next) => {
   try {
     const orders = await Order.find({ status: 'active' }).sort({ placedAt: -1 });
-    res.render('orders', { orders });
+    res.render('orders', { user: req.session.user, orders });
   } catch (err) {
     next(err);
   }
@@ -60,7 +60,7 @@ exports.getEditProduct = async (req, res, next) => {
     if (!item) {
       return res.status(404).send('Product not found');
     }
-    res.render('editProduct', { item });
+    res.render('editProduct', { user: req.session.user, item });
   } catch (err) {
     next(err);
   }
@@ -74,7 +74,7 @@ exports.postEditProduct = async (req, res, next) => {
     if (!updatedProduct) {
       return res.status(404).send('Product not found');
     }
-    res.redirect('/vulcanassasin');
+    res.redirect('/admin');
   } catch (error) {
     next(error);
   }
@@ -86,7 +86,7 @@ exports.deleteProduct = async (req, res, next) => {
     if (!item) {
       return res.status(404).send('Product not found');
     }
-    res.redirect('/vulcanassasin');
+    res.redirect('/admin');
   } catch (error) {
     next(error);
   }
