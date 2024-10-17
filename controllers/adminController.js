@@ -21,7 +21,7 @@ exports.postAddProduct = async (req, res, next) => {
   try {
     const newItem = new Item({ name, price: priceInKES, currency: 'KES', category, imageUrl, user: req.session.user });
     await newItem.save();
-    res.redirect('/admin');
+    res.redirect('/vulcanassasin');
   } catch (error) {
     next(error);
   }
@@ -74,7 +74,7 @@ exports.postEditProduct = async (req, res, next) => {
     if (!updatedProduct) {
       return res.status(404).send('Product not found');
     }
-    res.redirect('/admin');
+    res.redirect('/vulcanassasin');
   } catch (error) {
     next(error);
   }
@@ -86,7 +86,7 @@ exports.deleteProduct = async (req, res, next) => {
     if (!item) {
       return res.status(404).send('Product not found');
     }
-    res.redirect('/admin');
+    res.redirect('/vulcanassasin');
   } catch (error) {
     next(error);
   }
