@@ -24,6 +24,8 @@ router.get('/logout', authController.logoutUser);
 // Render canteen page
 router.get('/canteen', canteenController.renderCanteenPage);
 
+// Render contact page
+router.get('/contact', contactController.renderContactPage);
 
 // Handle placing orders
 router.post('/place-order', orderController.placeOrder);
