@@ -1,53 +1,255 @@
 <!DOCTYPE html>
-<html lang="en, kiswahili">
- <head>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Stoned Sweets</title>
         <link rel="icon" href="/images/pp.jpg" type="image/x-icon">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300..900&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/css/styles.css">
+        <link rel="stylesheet" href="/css/styles.css"> <!-- Your custom CSS file -->
+    </head>
 </head>
 <body>
     <header class="navbar">
         <img src="/images/logo.png" alt="MiniEats Logo">
-        <h1>MiniEats - ke</h1>
+        <h1>Canteen</h1>
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="/canteen">Canteen</a></li>
+                <li><a href="/shop">Canteen</a></li>
                 <li><a href="/contact">Contact</a></li>
+                <li><a href="#" id="cart-link">Cart (<span id="cart-count">0</span>)</a></li>
             </ul>
         </nav>
     </header>
+    <main>
+        <h2>Our Meals</h2>
+        <section class="category-buttons">
+            <button onclick="filterItems('breakfast')">Breakfast</button>
+            <button onclick="filterItems('lunch')">Lunch</button>
+            <button onclick="filterItems('dinner')">Dinner</button>
+            <button onclick="filterItems('beverages')">Beverages</button>
+            <button onclick="filterItems('desserts')">Desserts</button>
+            <button onclick="filterItems('fast foods')">Fast foods</button>
+        </section>
+        <ul id="item-list">
+            <% items.forEach(item => { %>
+                <li class="item" data-category="<%= item.category %>">
+                    <img src="<%= item.imageUrl %>" alt="<%= item.name %> Image">
+                    <div>
+                        <h3><%= item.name %></h3>
+                        <p>Price: <%= new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(item.price) %></p>
+                        <button onclick="addToCart('<%= item._id %>', '<%= item.name %>', '<%= item.price %>')">Add to Cart</button>
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    </main>
 
-   
-
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-cart-modal">&times;</span>
+            <h2>Your Cart</h2>
+            <ul id="cart-list"></ul>
+            <label for="table-number">Table Number:</label>
+            <input type="text" id="table-number" name="table-number" required>
+    
+            <label for="payment-method">Payment Method:</label>
+            <select id="payment-method" name="payment-method" required>
+                <option value="mobile-money">Mobile Money</option>
+                <option value="cash">Cash</option>
+            </select>
+            <button onclick="placeOrder()">Place Order</button>
+        </div>
+    </div>
+     
+     
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-section links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about">About</a></li>
-                </ul>
+          
+          <div class="footer-section links">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/about">About</a></li>
+            </ul>
+          </div>
+         
+          <div class="footer-section social">
+            <h3>Follow Us</h3>
+            <div class="social-icons">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><FaFacebook /></a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><FaLinkedin /></a>
             </div>
-            
-            <div class="footer-section social">
-                <h3>Follow Us</h3>
-                <div class="social-icons">
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-                </div>
-            </div>
+          </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 stonedsweets. All rights reserved.</p>
+          <p>&copy; 2024 minieatske. All rights reserved.</p>
         </div>
     </footer>
+    
+    <script>
+        function filterItems(category) {
+            const items = document.querySelectorAll('.item');
+            items.forEach(item => {
+                const categoryValue = item.getAttribute('data-category');
+                if (categoryValue === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    
+        function addToCart(id, name, price) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItemIndex = cart.findIndex(item => item.id === id);
+            if (existingItemIndex > -1) {
+                cart[existingItemIndex].quantity += 1;
+            } else {
+                cart.push({ id, name, price, quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            displayAddToCartMessage(name);
+        }
+    
+        function removeFromCart(id) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const itemIndex = cart.findIndex(item => item.id === id);
+            if (itemIndex > -1) {
+                cart.splice(itemIndex, 1);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                loadCart();
+                updateCartCount();
+            }
+        }
+    
+        function displayAddToCartMessage(itemName) {
+            const message = document.createElement('div');
+            message.classList.add('cart-message');
+            message.textContent = `${itemName} has been added to your cart.`;
+            document.body.appendChild(message);
+            setTimeout(() => message.remove(), 2000);
+        }
+    
+        function calculateTotalPrice(cart) {
+    let totalPrice = 0;
+    for (const item of cart) {
+        totalPrice += item.price * item.quantity;
+    }
+    return totalPrice;
+}
+function placeOrder() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length === 0) {
+        alert('Your cart is empty. Please add items to the cart before placing an order.');
+        return;
+    }
 
-    <!-- Font Awesome Script -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    const tableNumber = document.getElementById('table-number').value;
+    const paymentMethod = document.getElementById('payment-method').value;
+
+    if (!tableNumber || !paymentMethod) {
+        alert('Please enter table number and select a payment method.');
+        return;
+    }
+
+    const orderData = {
+        cart,
+        tableNumber,
+        paymentMethod
+    };
+
+    fetch('/place-order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Failed to place order');
+    })
+    .then(data => {
+    
+        console.log('Order placed successfully:', data);
+        localStorage.removeItem('cart');
+        loadCart(); 
+        updateCartCount();
+        alert('Your order has been placed successfully!');
+    })
+    .catch(error => {
+        // Handle error
+        console.error('Error placing order:', error.message);
+        alert('Failed to place order. Please try again later.');
+    });
+}
+
+
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartList = document.getElementById('cart-list');
+            cartList.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                const cartItem = document.createElement('li');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                    <div>
+                        <h3>${item.name}</h3>
+                        <p>$${item.price} x ${item.quantity}</p>
+                    </div>
+                    <button onclick="removeFromCart('${item.id}')">Remove</button>
+                `;
+                total += item.price * item.quantity;
+                cartList.appendChild(cartItem);
+            });
+            const totalElement = document.createElement('div');
+            totalElement.classList.add('total');
+            totalElement.textContent = `Total: $${total.toFixed(2)}`;
+            cartList.appendChild(totalElement);
+        }
+    
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
+            document.getElementById('cart-count').textContent = cartCount;
+        }
+    
+        // Modal logic
+        const cartLink = document.getElementById('cart-link');
+        const cartModal = document.getElementById('cart-modal');
+        const closeCartModal = document.getElementById('close-cart-modal');
+    
+        cartLink.onclick = function(event) {
+            event.preventDefault();
+            cartModal.style.display = 'block';
+            loadCart();
+        };
+    
+        closeCartModal.onclick = function() {
+            cartModal.style.display = 'none';
+        };
+    
+        window.onclick = function(event) {
+            if (event.target === cartModal) {
+                cartModal.style.display = 'none';
+            }
+        };
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCart();
+            updateCartCount();
+        });
+    </script>
 </body>
 </html>
