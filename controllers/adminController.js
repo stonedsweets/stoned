@@ -13,7 +13,7 @@ exports.renderAdminPage = async (req, res) => {
 };
 
 exports.getAddProduct = (req, res) => {
-  res.render('addProducts');
+  res.render('add');
 };
 
 exports.postAddProduct = async (req, res, next) => {
