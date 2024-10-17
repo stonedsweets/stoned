@@ -22,7 +22,7 @@ router.post('/login', authController.loginUser);
 router.get('/logout', authController.logoutUser);
 
 // Render canteen page
-router.get('/shop', canteenController.renderShopPage);
+router.get('/shop', shopController.renderShopPage);
 
 // Render contact page
 router.get('/contact', contactController.renderContactPage);
