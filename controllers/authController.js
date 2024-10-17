@@ -31,7 +31,7 @@ exports.signupUser = async (req, res, next) => {
   // Basic validation
   if (password !== confirmPassword) {
     req.flash('error_msg', 'Passwords do not match');
-    return res.redirect('/signup');
+    return res.redirect('/admin');
   }
 
   try {
