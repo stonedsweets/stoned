@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 // Change tableNumber to phoneNumber in the schema
-const OrderSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema({
     cart: {
         type: Array,
         required: true,
