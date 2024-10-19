@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Stoned Sweets</title>
+        <title>Stoned Sweets - Orders</title>
         <link rel="icon" href="/images/pp.jpg" type="image/x-icon">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
     </head>
 <body>
     <header class="navbar">
-        <img src="/images/logo.png">
+        <img src="/images/logo.png" alt="Stoned Sweets Logo">
         <h1>Orders</h1>
         <nav>
             <ul>
@@ -26,8 +26,8 @@
             <% orders.forEach(order => { %>
                 <li class="order">
                     <h3>Order Number: <%= order.orderNumber %></h3>
-                    <p>Table Number: <%= order.tableNumber %></p> <!-- New line for Table Number -->
-                    <p>Placed At: <%= order.placedAt.toLocaleString() %></p>
+                    <p>Phone Number: <%= order.phoneNumber %></p> <!-- Phone number instead of table number -->
+                    <p>Placed At: <%= new Date(order.placedAt).toLocaleString() %></p> <!-- Format placed time -->
                     <p>Total Price: <%= new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(order.totalPrice) %></p>
                     <h4>Items:</h4>
                     <ul>
