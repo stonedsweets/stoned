@@ -8,11 +8,11 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300..900&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/css/styles.css"> <!-- Your custom CSS file -->
+        <link rel="stylesheet" href="/css/styles.css"> <!-- Custom CSS -->
     </head>
 <body>
     <header class="navbar">
-        <h1>Welcome to Stoned Sweets.</h1>
+        <h1>Welcome to Stoned Sweets</h1>
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
@@ -21,15 +21,16 @@
             </ul>
         </nav>
     </header>
+
     <main>
         <ul id="item-list">
             <% items.forEach(item => { %>
                 <li class="item" data-category="<%= item.category %>">
-                    <img src="<%= item.imageUrl %>" alt="<%= item.name %> Image">
+                    <img src="<%= item.imageUrl %>" alt="<%= item.name %>">
                     <div>
                         <h3><%= item.name %></h3>
                         <p>Price: <%= new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(item.price) %></p>
-                        <button onclick="addToCart('<%= item._id %>', '<%= item.name %>', '<%= item.price %>')">Add to Cart</button>
+                        <button onclick="addToCart('<%= item._id %>', '<%= item.name %>', <%= item.price %>)">Add to Cart</button>
                     </div>
                 </li>
             <% }); %>
@@ -42,19 +43,19 @@
             <span class="close" id="close-cart-modal">&times;</span>
             <h2>Your Cart</h2>
             <ul id="cart-list"></ul>
+            <div id="cart-total"></div>
             <label for="phone-number">Phone number:</label>
-            <input type="text" id="phone-number" name="phone-number" required>
-    
+            <input type="text" id="phone-number" name="phone-number" placeholder="07XXXXXXXX" required>
+
             <label for="payment-method">Payment Method:</label>
             <select id="payment-method" name="payment-method" required>
                 <option value="mobile-money">Mobile Money</option>
                 <option value="cash">Cash</option>
             </select>
-            <button onclick="placeOrder()">Place Order</button>
+            <button id="place-order-btn">Place Order</button>
         </div>
     </div>
-     
-     
+
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section links">
@@ -64,40 +65,39 @@
                     <li><a href="/about">About</a></li>
                 </ul>
             </div>
+        </div>
         <div class="footer-bottom">
             <p>&copy; 2024 Stonedsweets. All rights reserved.</p>
         </div>
     </footer>
-    
+
     <script>
-        function filterItems(category) {
-            const items = document.querySelectorAll('.item');
-            items.forEach(item => {
-                const categoryValue = item.getAttribute('data-category');
-                if (categoryValue === category) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-    
+        // Load the cart on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCart();
+            updateCartCount();
+        });
+
+        // Cart functions
         function addToCart(id, name, price) {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             const existingItemIndex = cart.findIndex(item => item.id === id);
+
             if (existingItemIndex > -1) {
                 cart[existingItemIndex].quantity += 1;
             } else {
                 cart.push({ id, name, price, quantity: 1 });
             }
+
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCartCount();
             displayAddToCartMessage(name);
         }
-    
+
         function removeFromCart(id) {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             const itemIndex = cart.findIndex(item => item.id === id);
+
             if (itemIndex > -1) {
                 cart.splice(itemIndex, 1);
                 localStorage.setItem('cart', JSON.stringify(cart));
@@ -105,76 +105,12 @@
                 updateCartCount();
             }
         }
-    
-        function displayAddToCartMessage(itemName) {
-            const message = document.createElement('div');
-            message.classList.add('cart-message');
-            message.textContent = `${itemName} has been added to your cart.`;
-            document.body.appendChild(message);
-            setTimeout(() => message.remove(), 2000);
-        }
-    
-        function calculateTotalPrice(cart) {
-    let totalPrice = 0;
-    for (const item of cart) {
-        totalPrice += item.price * item.quantity;
-    }
-    return totalPrice;
-}
-function placeOrder() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    if (cart.length === 0) {
-        alert('Your cart is empty. Please add items to the cart before placing an order.');
-        return;
-    }
-
-    const tableNumber = document.getElementById('phone-number').value;
-    const paymentMethod = document.getElementById('payment-method').value;
-
-    if (!tableNumber || !paymentMethod) {
-        alert('Please enter Phone number and select a payment method.');
-        return;
-    }
-
-    const orderData = {
-        cart,
-        tableNumber,
-        paymentMethod
-    };
-
-    fetch('/place-order', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        }
-        throw new Error('Failed to place order');
-    })
-    .then(data => {
-    
-        console.log('Order placed successfully:', data);
-        localStorage.removeItem('cart');
-        loadCart(); 
-        updateCartCount();
-        alert('Your order has been placed successfully!');
-    })
-    .catch(error => {
-        // Handle error
-        console.error('Error placing order:', error.message);
-        alert('Failed to place order. Please try again later.');
-    });
-}
-
 
         function loadCart() {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             const cartList = document.getElementById('cart-list');
             cartList.innerHTML = '';
+
             let total = 0;
             cart.forEach(item => {
                 const cartItem = document.createElement('li');
@@ -182,50 +118,98 @@ function placeOrder() {
                 cartItem.innerHTML = `
                     <div>
                         <h3>${item.name}</h3>
-                        <p>$${item.price} x ${item.quantity}</p>
+                        <p>${new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(item.price)} x ${item.quantity}</p>
                     </div>
                     <button onclick="removeFromCart('${item.id}')">Remove</button>
                 `;
                 total += item.price * item.quantity;
                 cartList.appendChild(cartItem);
             });
-            const totalElement = document.createElement('div');
-            totalElement.classList.add('total');
-            totalElement.textContent = `Total: $${total.toFixed(2)}`;
-            cartList.appendChild(totalElement);
+
+            const totalElement = document.getElementById('cart-total');
+            totalElement.textContent = `Total: ${new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(total)}`;
         }
-    
+
         function updateCartCount() {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
             document.getElementById('cart-count').textContent = cartCount;
         }
-    
+
+        function displayAddToCartMessage(itemName) {
+            const message = document.createElement('div');
+            message.classList.add('cart-message');
+            message.textContent = `${itemName} has been added to your cart.`;
+            document.body.appendChild(message);
+            setTimeout(() => message.remove(), 2000);
+        }
+
+        function placeOrder() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                alert('Your cart is empty. Please add items to the cart before placing an order.');
+                return;
+            }
+
+            const phoneNumber = document.getElementById('phone-number').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            if (!/^(07|01)\d{8}$/.test(phoneNumber)) {
+                alert('Please enter a valid phone number.');
+                return;
+            }
+
+            if (!phoneNumber || !paymentMethod) {
+                alert('Please fill in all details before placing an order.');
+                return;
+            }
+
+            const orderData = { cart, phoneNumber, paymentMethod };
+
+            fetch('/place-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData),
+            })
+            .then(response => {
+                if (response.ok) return response.json();
+                throw new Error('Failed to place order');
+            })
+            .then(data => {
+                alert('Your order has been placed successfully!');
+                localStorage.removeItem('cart');
+                loadCart();
+                updateCartCount();
+            })
+            .catch(error => {
+                console.error('Error placing order:', error);
+                alert('Failed to place order. Please try again later.');
+            });
+        }
+
         // Modal logic
         const cartLink = document.getElementById('cart-link');
         const cartModal = document.getElementById('cart-modal');
         const closeCartModal = document.getElementById('close-cart-modal');
-    
+
         cartLink.onclick = function(event) {
             event.preventDefault();
             cartModal.style.display = 'block';
             loadCart();
         };
-    
+
         closeCartModal.onclick = function() {
             cartModal.style.display = 'none';
         };
-    
+
         window.onclick = function(event) {
             if (event.target === cartModal) {
                 cartModal.style.display = 'none';
             }
         };
-    
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCart();
-            updateCartCount();
-        });
+
+        // Event listener for placing order
+        document.getElementById('place-order-btn').addEventListener('click', placeOrder);
     </script>
 </body>
 </html>
