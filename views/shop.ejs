@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Stoned Sweets</title>
-        <link rel="icon" href="/images/pp.jpg" type="image/x-icon">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300..900&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/css/styles.css"> <!-- Custom CSS -->
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stoned Sweets</title>
+    <link rel="icon" href="/images/pp.jpg" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Custom CSS -->
+</head>
 <body>
     <header class="navbar">
         <h1>Welcome to Stoned Sweets</h1>
@@ -76,11 +76,7 @@
             const items = document.querySelectorAll('.item');
             items.forEach(item => {
                 const categoryValue = item.getAttribute('data-category');
-                if (categoryValue === category) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
+                item.style.display = (categoryValue === category || category === 'all') ? 'block' : 'none';
             });
         }
     
@@ -117,83 +113,69 @@
         }
     
         function calculateTotalPrice(cart) {
-    let totalPrice = 0;
-    for (const item of cart) {
-        totalPrice += item.price * item.quantity;
-    }
-    return totalPrice;
-}
-function placeOrder() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    if (cart.length === 0) {
-        alert('Your cart is empty. Please add items to the cart before placing an order.');
-        return;
-    }
-
-    const phoneNumber = document.getElementById('phone-number').value;
-    const paymentMethod = document.getElementById('payment-method').value;
-
-    if (!phoneNumber || !paymentMethod) {
-        alert('Please enter table number and select a payment method.');
-        return;
-    }
-
-    const orderData = {
-        cart,
-        phoneNumber,
-        paymentMethod
-    };
-
-    fetch('/place-order', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
+            return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
         }
-        throw new Error('Failed to place order');
-    })
-    .then(data => {
     
-        console.log('Order placed successfully:', data);
-        localStorage.removeItem('cart');
-        loadCart(); 
-        updateCartCount();
-        alert('Your order has been placed successfully!');
-    })
-    .catch(error => {
-        // Handle error
-        console.error('Error placing order:', error.message);
-        alert('Failed to place order. Please try again later.');
-    });
-}
+        function placeOrder() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                alert('Your cart is empty. Please add items to the cart before placing an order.');
+                return;
+            }
 
+            const phoneNumber = document.getElementById('phone-number').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            if (!phoneNumber || !paymentMethod) {
+                alert('Please enter your phone number and select a payment method.');
+                return;
+            }
+
+            const orderData = { cart, phoneNumber, paymentMethod };
+
+            fetch('/place-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData),
+            })
+            .then(response => response.ok ? response.json() : Promise.reject('Failed to place order'))
+            .then(data => {
+                console.log('Order placed successfully:', data);
+                localStorage.removeItem('cart');
+                loadCart(); 
+                updateCartCount();
+                alert('Your order has been placed successfully!');
+            })
+            .catch(error => {
+                console.error('Error placing order:', error);
+                alert('Failed to place order. Please try again later.');
+            });
+        }
 
         function loadCart() {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const cartList = document.getElementById('cart-list');
             cartList.innerHTML = '';
-            let total = 0;
+            let total = calculateTotalPrice(cart);
+
             cart.forEach(item => {
                 const cartItem = document.createElement('li');
                 cartItem.classList.add('cart-item');
                 cartItem.innerHTML = `
                     <div>
                         <h3>${item.name}</h3>
-                        <p>$${item.price} x ${item.quantity}</p>
+                        <p>KES ${item.price} x ${item.quantity}</p>
                     </div>
                     <button onclick="removeFromCart('${item.id}')">Remove</button>
                 `;
-                total += item.price * item.quantity;
                 cartList.appendChild(cartItem);
             });
+
             const totalElement = document.createElement('div');
             totalElement.classList.add('total');
-            totalElement.textContent = `Total: $${total.toFixed(2)}`;
+            totalElement.textContent = `Total: KES ${total.toFixed(2)}`;
             cartList.appendChild(totalElement);
         }
     
