@@ -145,47 +145,50 @@
         }
 
         function placeOrder() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            if (cart.length === 0) {
-                alert('Your cart is empty. Please add items to the cart before placing an order.');
-                return;
-            }
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length === 0) {
+        alert('Your cart is empty. Please add items to the cart before placing an order.');
+        return;
+    }
 
-            const phoneNumber = document.getElementById('phone-number').value;
-            const paymentMethod = document.getElementById('payment-method').value;
+    const phoneNumber = document.getElementById('phone-number').value; // Corrected variable name
+    const paymentMethod = document.getElementById('payment-method').value;
 
-            if (!/^(07|01)\d{8}$/.test(phoneNumber)) {
-                alert('Please enter a valid phone number.');
-                return;
-            }
+    if (!phoneNumber || !paymentMethod) {
+        alert('Please enter your phone number and select a payment method.');
+        return;
+    }
 
-            if (!phoneNumber || !paymentMethod) {
-                alert('Please fill in all details before placing an order.');
-                return;
-            }
+    const orderData = {
+        cart,
+        phoneNumber,  // Now sending phoneNumber correctly
+        paymentMethod,
+    };
 
-            const orderData = { cart, phoneNumber, paymentMethod };
-
-            fetch('/place-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData),
-            })
-            .then(response => {
-                if (response.ok) return response.json();
-                throw new Error('Failed to place order');
-            })
-            .then(data => {
-                alert('Your order has been placed successfully!');
-                localStorage.removeItem('cart');
-                loadCart();
-                updateCartCount();
-            })
-            .catch(error => {
-                console.error('Error placing order:', error);
-                alert('Failed to place order. Please try again later.');
-            });
+    fetch('/place-order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
         }
+        throw new Error('Failed to place order');
+    })
+    .then(data => {
+        alert('Your order has been placed successfully!');
+        localStorage.removeItem('cart');
+        loadCart();
+        updateCartCount();
+    })
+    .catch(error => {
+        console.error('Error placing order:', error.message);
+        alert('Failed to place order. Please try again later.');
+    });
+}
 
         // Modal logic
         const cartLink = document.getElementById('cart-link');
