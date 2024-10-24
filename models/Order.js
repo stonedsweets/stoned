@@ -1,5 +1,5 @@
+// models/Order.js
 const mongoose = require('mongoose');
-const moment = require('moment-timezone');
 
 const orderSchema = new mongoose.Schema({
     orderNumber: { type: Number, required: true, unique: true },
@@ -19,12 +19,9 @@ const orderSchema = new mongoose.Schema({
     paymentMethod: {
         type: String,
         required: true,
-        enum: ['mobile-money', 'cash'],
+        enum: ['mobile-money', 'cash'], // Ensure it's one of the specified values
     },
-    placedAt: {
-        type: Date,
-        default: () => moment().tz('Africa/Nairobi').toDate(),  // Kenyan time
-    },
+    placedAt: { type: Date, default: Date.now },
     status: { type: String, default: 'active' }
 });
 
