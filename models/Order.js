@@ -1,3 +1,6 @@
+const mongoose = require('mongoose');
+const moment = require('moment-timezone');
+
 const orderSchema = new mongoose.Schema({
     orderNumber: { type: Number, required: true, unique: true },
     items: [
@@ -16,15 +19,11 @@ const orderSchema = new mongoose.Schema({
     paymentMethod: {
         type: String,
         required: true,
-        enum: ['mobile-money', 'cash'], // Ensure it's one of the specified values
+        enum: ['mobile-money', 'cash'],
     },
-    placedAt: { 
-        type: Date, 
-        default: () => {
-            const currentTime = new Date();
-            const kenyanTime = new Date(currentTime.getTime() + 3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
-            return kenyanTime;
-        } 
+    placedAt: {
+        type: Date,
+        default: () => moment().tz('Africa/Nairobi').toDate(),  // Kenyan time
     },
     status: { type: String, default: 'active' }
 });
