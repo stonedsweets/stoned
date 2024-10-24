@@ -1,6 +1,3 @@
-// models/Order.js
-const mongoose = require('mongoose');
-
 const orderSchema = new mongoose.Schema({
     orderNumber: { type: Number, required: true, unique: true },
     items: [
@@ -21,7 +18,14 @@ const orderSchema = new mongoose.Schema({
         required: true,
         enum: ['mobile-money', 'cash'], // Ensure it's one of the specified values
     },
-    placedAt: { type: Date, default: Date.now },
+    placedAt: { 
+        type: Date, 
+        default: () => {
+            const currentTime = new Date();
+            const kenyanTime = new Date(currentTime.getTime() + 3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
+            return kenyanTime;
+        } 
+    },
     status: { type: String, default: 'active' }
 });
 
