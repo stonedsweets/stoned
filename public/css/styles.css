@@ -11,11 +11,6 @@ body {
   background-color: #f8f9fa;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease-in; /* Add global transition */
-}
-
-h1, h3 {
-  transition: color 0.3s ease-in; /* Apply transition to text color */
 }
 
 h1 {
@@ -34,18 +29,47 @@ h3 {
   padding: 15px 20px;
   background-color: #333;
   color: white;
-  transition: background-color 0.3s ease-in, color 0.3s ease-in;
 }
 
 .navbar img {
   height: 40px;
-  transition: transform 0.3s ease-in;
 }
 
 .navbar h1 {
   font-size: 20px;
   margin: 0;
-  transition: font-size 0.3s ease-in;
+}
+
+.main {
+  position: relative; /* Positioning context for the pseudo-element */
+  overflow: hidden; /* Ensure the pseudo-element does not overflow */
+}
+
+.main::before {
+  content: '';
+  position: absolute; /* Positioning of the pseudo-element */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/images/bg.png');
+  background-size: cover; /* Cover the entire area */
+  filter: blur(8px); /* Adjust blur amount as needed */
+  z-index: 0; /* Position behind content */
+}
+
+.main > * {
+  position: relative; /* Ensure contents are above the pseudo-element */
+  z-index: 1; /* Position above the blurred background */
+  color: white; /* Adjust text color for visibility */
+}
+
+.navbar nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar nav ul li a {
@@ -53,44 +77,53 @@ h3 {
   color: white;
   font-weight: bold;
   font-size: 16px;
-  transition: color 0.3s ease-in;
+  transition: color 0.3s ease;
 }
 
 .navbar nav ul li a:hover {
   color: #ffcd3c;
 }
 
-/* Main Section with Blur Effect */
-.main {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease-in; /* Transition for main content */
-}
+/* Responsive Navbar for Mobile */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+  }
 
-.main::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('/images/bg.png');
-  background-size: cover;
-  filter: blur(8px);
-  z-index: 0;
-  transition: filter 0.3s ease-in;
+  .navbar nav ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .navbar img {
+    height: 35px;
+  }
+
+  .navbar h1 {
+    font-size: 18px;
+  }
+
+  .navbar nav ul li a {
+    font-size: 14px;
+  }
 }
 
 /* Hero Section */
+.hero {
+  text-align: center;
+  padding: 40px 20px; /* Replace with your image path */
+  background-size: cover; /* Ensures the image covers the entire area */
+  background-position: center; /* Centers the image */
+  position: relative; /* Needed to position child elements correctly */
+}
+
 .hero h2 {
   font-size: 36px;
-  transition: font-size 0.3s ease-in, color 0.3s ease-in;
 }
 
 .hero p {
   font-size: 16px;
   margin-bottom: 20px;
-  transition: font-size 0.3s ease-in;
 }
 
 .hero .btn {
@@ -99,18 +132,38 @@ h3 {
   padding: 10px 20px;
   border-radius: 5px;
   text-decoration: none;
-  transition: background-color 0.3s ease-in;
 }
 
-.hero .btn:hover {
-  background-color: #218838;
+@media (max-width: 768px) {
+  .hero h2 {
+    font-size: 28px;
+  }
+
+  .hero p {
+    font-size: 14px;
+  }
+
+  .hero .btn {
+    padding: 8px 15px;
+  }
 }
 
-/* Products Section */
+/* Featured Products Section */
+.featured-products {
+  padding: 40px 20px;
+  text-align: center;
+}
+
 .featured-products h2 {
   font-size: 30px;
   margin-bottom: 20px;
-  transition: font-size 0.3s ease-in, color 0.3s ease-in;
+}
+
+.products-grid {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .product {
@@ -119,15 +172,40 @@ h3 {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 220px;
-  transition: transform 0.3s ease-in, box-shadow 0.3s ease-in;
 }
 
-.product:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+.product img {
+  width: 100px;
+  height: auto;
 }
 
-/* Item List */
+@media (max-width: 768px) {
+  .featured-products h2 {
+    font-size: 24px;
+  }
+
+  .product {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .product img {
+    width: 80px;
+  }
+}
+
+/* Main Item List Styles */
+main {
+  flex: 1; /* Ensures main content expands and pushes footer to the bottom */
+  padding: 20px;
+}
+
+#item-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
 .item {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -135,15 +213,45 @@ h3 {
   padding: 15px;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in, background-color 0.3s ease-in, box-shadow 0.3s ease-in;
+  transition: transform 0.3s ease;
 }
 
 .item:hover {
   transform: translateY(-5px);
-  background-color: #fafafa;
 }
 
-/* Cart Modal */
+.item img {
+  max-width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.item h3 {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.item p {
+  color: #f05454;
+  font-weight: bold;
+}
+
+.item button {
+  background-color: #f05454;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.item button:hover {
+  background-color: #ffcd3c;
+}
+
+/* Cart Modal Styles */
 .modal {
   display: none;
   position: fixed;
@@ -155,7 +263,6 @@ h3 {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  transition: background-color 0.3s ease-in;
 }
 
 .modal-content {
@@ -165,7 +272,6 @@ h3 {
   width: 80%;
   max-width: 500px;
   position: relative;
-  transition: transform 0.3s ease-in;
 }
 
 .close {
@@ -175,26 +281,58 @@ h3 {
   font-size: 30px;
   cursor: pointer;
   color: #f05454;
-  transition: color 0.3s ease-in;
 }
 
-.close:hover {
-  color: #ffcd3c;
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
 }
 
-/* Footer */
+.total {
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: right;
+}
+
+/* Footer Styles */
 .footer {
   background-color: #222;
   color: white;
   padding: 40px 20px;
   text-align: center;
-  transition: background-color 0.3s ease-in;
+  margin-top: auto; /* Ensures footer is at the bottom */
+}
+
+.footer h3 {
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+.footer .footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
 }
 
 .footer-section ul li a {
   text-decoration: none;
   color: #fff;
-  transition: color 0.3s ease-in;
+  transition: color 0.3s ease;
 }
 
 .footer-section ul li a:hover {
@@ -205,7 +343,6 @@ h3 {
   color: #fff;
   font-size: 20px;
   margin: 0 10px;
-  transition: color 0.3s ease-in;
 }
 
 .footer .social-icons a:hover {
@@ -217,5 +354,16 @@ h3 {
   font-size: 14px;
   border-top: 1px solid #444;
   padding-top: 15px;
-  transition: border-color 0.3s ease-in;
+}
+
+/* Responsive Styles for Footer */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-section {
+    margin-bottom: 20px;
+  }
 }
